@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from PIL import Image
-import io
+import requests
 import torch
 from transformers import AutoModelForCausalLM, AutoProcessor
 
@@ -8,39 +8,42 @@ app = Flask(__name__)
 
 model_id = "microsoft/Phi-3.5-vision-instruct"
 
-# Load model and processor
+# Load model
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    device_map="cuda",
+    device_map="auto",
     trust_remote_code=True,
     torch_dtype="auto",
-    _attn_implementation='flash_attention_2'
+    load_in_8bit=True,
+    _attn_implementation='eager'
 )
 
+# Load processor
 processor = AutoProcessor.from_pretrained(
     model_id,
     trust_remote_code=True,
-    num_crops=4
+    num_crops=1
 )
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    if 'prompt' not in request.form:
-        return jsonify({"error": "No prompt provided"}), 400
-    
-    if 'files' not in request.files:
-        return jsonify({"error": "No files provided"}), 400
+    data = request.json
+    if not data or 'prompt' not in data or 'image_urls' not in data:
+        return jsonify({"error": "Missing prompt or image URLs"}), 400
 
-    prompt = request.form['prompt']
-    files = request.files.getlist('files')
+    prompt = data['prompt']
+    image_urls = data['image_urls']
 
     images = []
     placeholder = ""
 
-    for i, file in enumerate(files, start=1):
-        image = Image.open(io.BytesIO(file.read()))
-        images.append(image)
-        placeholder += f"<|image_{i}|>\n"
+    for i, url in enumerate(image_urls, start=1):
+        try:
+            image = Image.open(requests.get(url, stream=True).raw)
+            images.append(image)
+            placeholder += f"<|image_{i}|>\n"
+        except Exception as e:
+            return jsonify({"error": f"Failed to load image from URL {url}: {str(e)}"}), 400
 
     messages = [
         {"role": "user", "content": placeholder + prompt},
