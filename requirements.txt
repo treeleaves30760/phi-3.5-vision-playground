@@ -2,6 +2,7 @@ pillow
 requests
 transformers
 accelerate
+flash-attn --no-build-isolation
 --find-links https://download.pytorch.org/whl/cu121
 torch
 torchvision

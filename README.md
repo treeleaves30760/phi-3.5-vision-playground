@@ -1,3 +1,17 @@
 # Phi 3.5 vision Playground
 
 This is a playground for Phi 3.5 vision
+
+## Install
+
+Flash-attn Install
+
+```bash
+pip install flash-attn --no-build-isolation
+```
+
+Torch Install, use Cuda12.2
+
+```bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
