@@ -2,4 +2,5 @@ pillow
 requests
 transformers
 torch
+torchvision 
 accelerate
