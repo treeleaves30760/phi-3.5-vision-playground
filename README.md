@@ -2,6 +2,11 @@
 
 This is a playground for Phi 3.5 vision
 
+## Equipment
+
+RTX4080
+DDR5 32G
+
 ## Install
 
 Flash-attn Install
