@@ -6,12 +6,13 @@ from transformers import AutoProcessor
 model_id = "microsoft/Phi-3.5-vision-instruct"
 
 # Note: set _attn_implementation='eager' if you don't have flash_attn installed
+#       or set _attn_implementation='flash_attention_2' if you have flash_attn installed
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
     device_map="cuda",
     trust_remote_code=True,
     torch_dtype="auto",
-    _attn_implementation='flash_attention_2'
+    _attn_implementation='eager'
 )
 
 # for best performance, use num_crops=4 for multi-frame, num_crops=16 for single-frame.

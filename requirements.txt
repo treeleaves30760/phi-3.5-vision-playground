@@ -2,3 +2,4 @@ pillow
 requests
 transformers
 torch
+accelerate
