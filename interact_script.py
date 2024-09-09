@@ -44,7 +44,7 @@ prompt = processor.tokenizer.apply_chat_template(
 inputs = processor(prompt, images, return_tensors="pt").to("cuda:0")
 
 generation_args = {
-    "max_new_tokens": 1000,
+    "max_new_tokens": 2048,
     "temperature": 0.0,
     "do_sample": False,
 }
